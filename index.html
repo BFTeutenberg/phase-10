@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -247,6 +248,16 @@
 <!-- ══ SETUP ══ -->
 <div id="setup-screen">
   <div class="logo-block"><h1>Phase 10</h1><p>Score Tracker</p></div>
+
+  <div id="resume-banner" style="display:none;width:100%;max-width:460px;background:#fff6e0;border:1px solid #e0c070;border-radius:14px;padding:16px;box-sizing:border-box">
+    <div style="font-size:0.98rem;color:#7a5800;font-weight:700;margin-bottom:6px">⏸️ Game in progress</div>
+    <div id="resume-details" style="font-size:0.85rem;color:#6b5a30;line-height:1.5;margin-bottom:12px"></div>
+    <div style="display:flex;gap:8px">
+      <button onclick="doResume()" style="flex:1;padding:11px;border-radius:9px;border:none;background:#2d6a4f;color:#fff;font-size:0.9rem;font-weight:700;cursor:pointer">Resume Game</button>
+      <button onclick="discardResume()" style="padding:11px 16px;border-radius:9px;border:1px solid #c9b280;background:transparent;color:#8a7340;font-size:0.9rem;font-weight:700;cursor:pointer">Discard</button>
+    </div>
+  </div>
+
   <div class="setup-card">
     <h2>Game Details</h2>
     <div class="field-label">📍 Location</div>
@@ -350,7 +361,7 @@
 <div class="modal-overlay" id="new-modal">
   <div class="modal">
     <h2>New Game?</h2>
-    <p>Starting a new game will abandon the current game. Any unconfirmed round data will be lost. Are you sure?</p>
+    <p>This will discard the current game permanently — it will not be saved or added to your archive. Are you sure?</p>
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeModal('new-modal')">Cancel</button>
       <button class="modal-btn confirm" onclick="newGame()">Yes, New Game</button>
@@ -434,8 +445,11 @@ function startGame() {
   currentRound = 1; history = []; dealerIdx = 0;
   document.getElementById('header-location').textContent = gameLocation ? '📍 '+gameLocation : '';
   closeModal('new-modal');
+  const rb = document.getElementById('resume-banner');
+  if (rb) rb.style.display = 'none';
   hideAll(); showGameScreen();
   switchTab('entry'); renderScoreEntry(); renderPhaseTracker(); updateHeaderRound();
+  saveGame();
 }
 
 /* ── Dealer select ── */
@@ -511,6 +525,7 @@ function confirmRound() {
   const last = history[history.length-1];
   if (players.some((p,i)=>last.scores[i].phase===10&&last.scores[i].phaseComplete)) { endGame(); return; }
   renderScoreEntry(); renderPhaseTracker(); renderScoreboard();
+  saveGame();
 }
 
 function updateHeaderRound() {
@@ -618,6 +633,7 @@ function saveEditedRound() {
   rebuildPlayerState();
   closeModal('edit-modal');
   renderScoreboard(); renderPhaseTracker(); renderScoreEntry();
+  saveGame();
 }
 
 function deleteRound() {
@@ -626,6 +642,7 @@ function deleteRound() {
   rebuildPlayerState();
   closeModal('edit-modal');
   renderScoreboard(); renderPhaseTracker(); renderScoreEntry();
+  saveGame();
 }
 
 function rebuildPlayerState() {
@@ -677,6 +694,7 @@ function switchTab(tab) {
 /* ── End / Winner ── */
 function endGame() {
   closeModal('end-modal');
+  clearSavedGame();
   saveToArchive();
   const sorted=[...players].sort((a,b)=>a.totalScore-b.totalScore||b.currentPhase-a.currentPhase);
   const w=sorted[0];
@@ -692,11 +710,63 @@ function showFinalScoreboard() { hideAll(); showGameScreen(); renderScoreboard()
 
 function newGame() {
   closeModal('new-modal');
+  clearSavedGame();
   hideAll();
   document.getElementById('setup-screen').style.display='flex';
   document.getElementById('player-inputs').innerHTML='';
   document.getElementById('game-location').value='';
+  document.getElementById('resume-banner').style.display='none';
   addPlayerInput(); addPlayerInput(); buildPhaseRef();
+}
+
+/* ── Auto-save in-progress game ── */
+const KEY_GAME = 'phase10_game';
+
+function saveGame() {
+  if (!players.length) return;
+  try {
+    localStorage.setItem(KEY_GAME, JSON.stringify({
+      players, currentRound, history, gameLocation, dealerIdx, savedAt: Date.now()
+    }));
+  } catch(e) {}
+}
+
+function clearSavedGame() { try { localStorage.removeItem(KEY_GAME); } catch(e) {} }
+
+function getSavedGame() {
+  try { const s = localStorage.getItem(KEY_GAME); return s ? JSON.parse(s) : null; }
+  catch(e) { return null; }
+}
+
+function checkForSavedGame() {
+  const s = getSavedGame();
+  if (!s || !s.players || !s.players.length) return;
+  const names = s.players.map(p=>p.name).join(', ');
+  const when  = new Date(s.savedAt).toLocaleString('en-GB',
+    {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('resume-details').innerHTML =
+    `<strong>${names}</strong><br>Round <strong>${s.currentRound}</strong>${s.gameLocation?' · 📍 '+s.gameLocation:''}<br>Saved ${when}`;
+  document.getElementById('resume-banner').style.display = 'block';
+}
+
+function doResume() {
+  const s = getSavedGame();
+  if (!s) return;
+  players       = s.players;
+  currentRound  = s.currentRound;
+  history       = s.history;
+  gameLocation  = s.gameLocation || '';
+  dealerIdx     = s.dealerIdx || 0;
+  document.getElementById('header-location').textContent = gameLocation ? '📍 '+gameLocation : '';
+  document.getElementById('resume-banner').style.display = 'none';
+  hideAll(); showGameScreen();
+  switchTab('entry'); renderScoreEntry(); renderPhaseTracker(); updateHeaderRound(); renderScoreboard();
+}
+
+function discardResume() {
+  if (!confirm('Discard the saved game in progress?')) return;
+  clearSavedGame();
+  document.getElementById('resume-banner').style.display = 'none';
 }
 
 /* ── Archive ── */
@@ -815,7 +885,11 @@ function showGameScreen() {
 }
 
 /* ── Init ── */
-(function(){addPlayerInput();addPlayerInput();buildPhaseRef();})();
+(function(){addPlayerInput();addPlayerInput();buildPhaseRef();checkForSavedGame();})();
+
+window.addEventListener('pagehide', saveGame);
+window.addEventListener('beforeunload', saveGame);
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') saveGame(); });
 </script>
 </body>
 </html>
