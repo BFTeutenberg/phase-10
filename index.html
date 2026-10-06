@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,10 +23,10 @@
     --shadow-lg:  0 8px 32px rgba(0,0,0,0.13);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; min-height: 100vh; }
+  body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; }
 
   /* ════ SETUP ════ */
-  #setup-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:28px; gap:24px; }
+  #setup-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; padding:28px; gap:24px; }
   .logo-block { text-align:center; }
   .logo-block h1 { font-family:'Playfair Display',serif; font-size:clamp(48px,11vw,88px); font-weight:800; letter-spacing:2px; color:var(--accent); line-height:1; }
   .logo-block p { color:var(--muted); font-size:13px; letter-spacing:4px; text-transform:uppercase; margin-top:6px; font-weight:600; }
@@ -59,7 +58,7 @@
   .phase-ref-desc { color:var(--muted); font-size:12px; }
 
   /* ════ GAME ════ */
-  #game-screen { display:none; flex-direction:column; min-height:100vh; }
+  #game-screen { display:none; flex-direction:column; }
   .game-header { display:flex; align-items:center; justify-content:space-between; padding:13px 18px; border-bottom:1.5px solid var(--border); background:var(--surface); position:sticky; top:0; z-index:100; box-shadow:0 1px 6px rgba(0,0,0,0.07); }
   .game-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:800; color:var(--accent); display:block; line-height:1.1; }
   .game-location-tag { font-size:11px; color:var(--accent3); margin-top:1px; max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; }
@@ -104,34 +103,86 @@
   .confirm-round-btn { width:100%; background:var(--accent3); border:none; border-radius:11px; padding:13px; color:#fff; font-family:'Nunito',sans-serif; font-size:17px; font-weight:800; cursor:pointer; margin-top:14px; transition:background 0.18s,transform 0.1s; box-shadow:0 3px 10px rgba(39,160,110,0.25); }
   .confirm-round-btn:hover { background:#1f8a5c; transform:translateY(-1px); }
 
-  /* ════ SCOREBOARD ════ */
+  /* ════ SCOREBOARD — single sticky table ════ */
   .edit-hint { font-size:11px; color:var(--muted); text-align:center; margin-bottom:10px; font-weight:600; }
-  .sb-wrapper { display:flex; width:100%; border:1.5px solid var(--border); border-radius:12px; overflow:hidden; }
-  .sb-left { flex-shrink:0; z-index:2; border-right:1.5px solid var(--border2); }
-  .sb-mid { flex:1; overflow-x:auto; }
-  .sb-right { flex-shrink:0; z-index:2; border-left:2px solid var(--border2); }
-  .sb-table { border-collapse:collapse; width:100%; }
-  .sb-table th { font-family:'Nunito',sans-serif; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); padding:9px 10px; background:var(--surface2); border-bottom:1.5px solid var(--border); white-space:nowrap; text-align:center; }
-  .sb-left .sb-table th { text-align:left; }
-  .sb-right .sb-table th { color:var(--accent); }
-  .sb-table td { padding:8px 10px; border-bottom:1px solid var(--border); text-align:center; background:var(--surface); vertical-align:middle; }
+  .sb-scroll-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sb-table {
+    border-collapse: collapse;
+    /* min-width keeps the table wide enough to scroll when many rounds exist */
+  }
+  .sb-table th {
+    font-family:'Nunito',sans-serif;
+    font-size:11px; font-weight:800;
+    letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--muted);
+    padding:9px 10px;
+    background:var(--surface2);
+    border-bottom:1.5px solid var(--border);
+    white-space:nowrap;
+    text-align:center;
+  }
+  .sb-table td {
+    padding:8px 10px;
+    border-bottom:1px solid var(--border);
+    text-align:center;
+    background:var(--surface);
+    vertical-align:middle;
+    white-space:nowrap;
+  }
   .sb-table tr:last-child td { border-bottom:none; }
   .sb-table tr.rank-1 td { background:#fffaf7; }
-  .sb-left .sb-table td { text-align:left; }
-  .sb-pname { font-weight:800; font-size:14px; white-space:nowrap; }
+
+  /* sticky player-name column */
+  .sb-col-player {
+    position:sticky; left:0; z-index:3;
+    text-align:left !important;
+    background:var(--surface2) !important;
+    border-right:1.5px solid var(--border2);
+    min-width:90px; max-width:120px;
+  }
+  .sb-table tr.rank-1 td.sb-col-player { background:#fffaf7 !important; }
+  /* header cell for player col */
+  .sb-table th.sb-col-player {
+    z-index:4;
+    background:var(--surface2) !important;
+    border-right:1.5px solid var(--border2);
+    text-align:left !important;
+  }
+
+  /* sticky total column on right */
+  .sb-col-total {
+    position:sticky; right:0; z-index:3;
+    background:var(--surface2) !important;
+    border-left:2px solid var(--border2);
+    min-width:60px;
+  }
+  .sb-table tr.rank-1 td.sb-col-total { background:#fffaf7 !important; }
+  .sb-table th.sb-col-total {
+    z-index:4;
+    background:var(--surface2) !important;
+    border-left:2px solid var(--border2);
+    color:var(--accent);
+  }
+
+  .sb-pname { font-weight:800; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:110px; display:block; }
   .rank-1 .sb-pname { color:var(--accent); }
   .rank-1 .sb-pname::before { content:"👑 "; }
-  .sb-phase { font-size:12px; font-weight:700; color:var(--accent3); white-space:nowrap; }
-  .sb-round-cell { cursor:pointer; position:relative; min-width:60px; }
+  .sb-phase { font-size:11px; font-weight:700; color:var(--accent3); }
+  .sb-round-cell { cursor:pointer; position:relative; min-width:56px; }
   .sb-round-cell:hover { background:#fff8f5 !important; }
   .sb-round-cell:hover .sb-score-num { color:var(--accent); }
-  .sb-round-cell::after { content:'✏'; font-size:8px; position:absolute; top:4px; right:3px; color:var(--border2); transition:color 0.15s; }
+  .sb-round-cell::after { content:'✏'; font-size:8px; position:absolute; top:3px; right:3px; color:var(--border2); transition:color 0.15s; }
   .sb-round-cell:hover::after { color:var(--accent); }
-  .sb-score-num { font-weight:800; font-size:16px; display:block; line-height:1; }
+  .sb-score-num { font-weight:800; font-size:15px; display:block; line-height:1; }
   .sb-phase-mark { font-size:10px; font-weight:700; margin-top:1px; }
   .sb-dealer-mark { font-size:9px; color:var(--accent2); font-weight:800; margin-top:2px; }
-  .sb-total-cell { font-weight:900; font-size:18px; color:var(--accent); white-space:nowrap; }
-  .rank-1 td.sb-total-td { background:#fffaf7; }
+  .sb-total-cell { font-weight:900; font-size:17px; color:var(--accent); }
 
   /* ════ PHASE TRACKER ════ */
   .phase-tracker-grid { display:grid; gap:10px; }
@@ -145,21 +196,36 @@
   .phase-dot.current { border-color:var(--accent); color:var(--accent); background:#fff8f6; box-shadow:0 0 0 2px rgba(212,80,42,0.18); }
 
   /* ════ WINNER ════ */
-  #winner-screen { display:none; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:24px; text-align:center; gap:20px; background:linear-gradient(160deg,#fff8f6 0%,#f5f3ee 100%); }
+  #winner-screen { display:none; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; gap:18px; background:linear-gradient(160deg,#fff8f6 0%,#f5f3ee 100%); min-height:100dvh; }
   .winner-trophy { font-size:72px; animation:bounce 1.5s ease-in-out infinite; }
   @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-13px)} }
   .winner-title { font-family:'Playfair Display',serif; font-size:clamp(36px,10vw,72px); font-weight:800; color:var(--accent); }
   .winner-name { font-family:'Playfair Display',serif; font-size:clamp(26px,7vw,50px); font-weight:700; }
   .winner-score { font-size:15px; color:var(--muted); line-height:1.9; font-weight:600; }
   .winner-score span { color:var(--accent); font-weight:800; }
-  .winner-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
-  .winner-btn { background:var(--accent); border:none; border-radius:11px; padding:13px 26px; color:#fff; font-family:'Nunito',sans-serif; font-size:16px; font-weight:800; cursor:pointer; transition:background 0.18s; box-shadow:0 3px 12px rgba(212,80,42,0.25); }
+
+  /* Save confirmation banner */
+  .save-banner {
+    display:flex; align-items:center; gap:9px;
+    background:#edfaf4; border:1.5px solid var(--complete);
+    border-radius:12px; padding:11px 18px;
+    font-size:14px; font-weight:700; color:var(--complete);
+    width:100%; max-width:380px; justify-content:center;
+    animation:fadeInUp 0.4s ease;
+  }
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .save-banner-icon { font-size:20px; }
+
+  .winner-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; width:100%; max-width:380px; }
+  .winner-btn { background:var(--accent); border:none; border-radius:11px; padding:13px 20px; color:#fff; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; cursor:pointer; transition:background 0.18s; box-shadow:0 3px 12px rgba(212,80,42,0.25); flex:1; min-width:130px; }
   .winner-btn:hover { background:#b83e20; }
   .winner-btn.outline { background:transparent; border:1.5px solid var(--border2); color:var(--muted); box-shadow:none; }
   .winner-btn.outline:hover { border-color:var(--accent2); color:var(--accent2); background:#f0f4ff; }
+  .winner-btn.green { background:var(--accent3); box-shadow:0 3px 12px rgba(39,160,110,0.25); }
+  .winner-btn.green:hover { background:#1f8a5c; }
 
   /* ════ ARCHIVE ════ */
-  #archive-screen { display:none; flex-direction:column; min-height:100vh; }
+  #archive-screen { display:none; flex-direction:column; }
   .archive-header { display:flex; align-items:center; gap:14px; padding:15px 20px; border-bottom:1.5px solid var(--border); background:var(--surface); position:sticky; top:0; z-index:100; box-shadow:0 1px 6px rgba(0,0,0,0.07); }
   .archive-header h2 { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--accent); flex:1; }
   .archive-body { padding:20px; display:flex; flex-direction:column; gap:16px; }
@@ -240,6 +306,7 @@
     .edit-player-row { grid-template-columns:1fr; }
     .tabs { gap:2px; }
     .tab { padding:7px 10px; font-size:12px; }
+    .tab-content { margin:0 10px 14px; padding:14px; }
   }
 </style>
 </head>
@@ -248,16 +315,6 @@
 <!-- ══ SETUP ══ -->
 <div id="setup-screen">
   <div class="logo-block"><h1>Phase 10</h1><p>Score Tracker</p></div>
-
-  <div id="resume-banner" style="display:none;width:100%;max-width:460px;background:#fff6e0;border:1px solid #e0c070;border-radius:14px;padding:16px;box-sizing:border-box">
-    <div style="font-size:0.98rem;color:#7a5800;font-weight:700;margin-bottom:6px">⏸️ Game in progress</div>
-    <div id="resume-details" style="font-size:0.85rem;color:#6b5a30;line-height:1.5;margin-bottom:12px"></div>
-    <div style="display:flex;gap:8px">
-      <button onclick="doResume()" style="flex:1;padding:11px;border-radius:9px;border:none;background:#2d6a4f;color:#fff;font-size:0.9rem;font-weight:700;cursor:pointer">Resume Game</button>
-      <button onclick="discardResume()" style="padding:11px 16px;border-radius:9px;border:1px solid #c9b280;background:transparent;color:#8a7340;font-size:0.9rem;font-weight:700;cursor:pointer">Discard</button>
-    </div>
-  </div>
-
   <div class="setup-card">
     <h2>Game Details</h2>
     <div class="field-label">📍 Location</div>
@@ -308,13 +365,11 @@
     <button class="confirm-round-btn" onclick="confirmRound()">Confirm Round ▶</button>
   </div>
 
-  <!-- Scoreboard -->
+  <!-- Scoreboard — single scrollable table with sticky columns -->
   <div id="tab-board" class="tab-content">
     <div class="edit-hint">✏ Tap any round score to edit it</div>
-    <div class="sb-wrapper">
-      <div class="sb-left"><table class="sb-table" id="sb-left-table"></table></div>
-      <div class="sb-mid" id="sb-mid"><table class="sb-table" id="sb-mid-table"></table></div>
-      <div class="sb-right"><table class="sb-table" id="sb-right-table"></table></div>
+    <div class="sb-scroll-wrap" id="sb-scroll-wrap">
+      <table class="sb-table" id="sb-table"></table>
     </div>
   </div>
 
@@ -330,8 +385,14 @@
   <div class="winner-title">Winner!</div>
   <div class="winner-name" id="winner-name"></div>
   <div class="winner-score" id="winner-score"></div>
+  <!-- Save confirmation banner — shown after endGame() -->
+  <div class="save-banner" id="save-banner" style="display:none">
+    <span class="save-banner-icon">✅</span>
+    <span>Game saved to archive</span>
+  </div>
   <div class="winner-actions">
     <button class="winner-btn" onclick="showFinalScoreboard()">View Scores</button>
+    <button class="winner-btn green" onclick="showArchive()">View Archive</button>
     <button class="winner-btn outline" onclick="openModal('new-modal')">New Game</button>
   </div>
 </div>
@@ -361,7 +422,7 @@
 <div class="modal-overlay" id="new-modal">
   <div class="modal">
     <h2>New Game?</h2>
-    <p>This will discard the current game permanently — it will not be saved or added to your archive. Are you sure?</p>
+    <p>Starting a new game will abandon the current game. Any unconfirmed round data will be lost. Are you sure?</p>
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeModal('new-modal')">Cancel</button>
       <button class="modal-btn confirm" onclick="newGame()">Yes, New Game</button>
@@ -445,11 +506,8 @@ function startGame() {
   currentRound = 1; history = []; dealerIdx = 0;
   document.getElementById('header-location').textContent = gameLocation ? '📍 '+gameLocation : '';
   closeModal('new-modal');
-  const rb = document.getElementById('resume-banner');
-  if (rb) rb.style.display = 'none';
   hideAll(); showGameScreen();
   switchTab('entry'); renderScoreEntry(); renderPhaseTracker(); updateHeaderRound();
-  saveGame();
 }
 
 /* ── Dealer select ── */
@@ -489,7 +547,7 @@ function renderScoreEntry() {
   // Live update dealer highlight when select changes
   document.getElementById('dealer-select').addEventListener('change', function() {
     dealerIdx = parseInt(this.value);
-    renderScoreEntry(); // re-render to update highlights
+    renderScoreEntry();
   });
 }
 
@@ -525,60 +583,65 @@ function confirmRound() {
   const last = history[history.length-1];
   if (players.some((p,i)=>last.scores[i].phase===10&&last.scores[i].phaseComplete)) { endGame(); return; }
   renderScoreEntry(); renderPhaseTracker(); renderScoreboard();
-  saveGame();
 }
 
 function updateHeaderRound() {
   document.getElementById('header-round').textContent = currentRound;
 }
 
-/* ── Scoreboard ── */
+/* ── Scoreboard — single table with sticky player + total columns ── */
 function renderScoreboard() {
   const n = history.length;
   const sorted = [...players].map((p,i)=>({...p,origIdx:i}))
     .sort((a,b)=>a.totalScore-b.totalScore||b.currentPhase-a.currentPhase);
 
-  // LEFT
-  let lHead = '<thead><tr><th>Player</th><th>Phase</th></tr></thead>';
-  let lBody = sorted.map((p,rank)=>`<tr class="${rank===0?'rank-1':''}">
-    <td><div class="sb-pname">${p.name}</div></td>
-    <td><div class="sb-phase">P${Math.min(p.currentPhase,10)}</div></td>
-  </tr>`).join('');
-  document.getElementById('sb-left-table').innerHTML = lHead+'<tbody>'+lBody+'</tbody>';
-
-  // MID
-  let mHead = '<thead><tr>';
-  for (let r=1;r<=n;r++) {
+  // Build header row
+  let headCells = `<th class="sb-col-player">Player</th>`;
+  for (let r=1; r<=n; r++) {
     const dealerName = players[history[r-1].dealer]?.name || '';
-    mHead += `<th title="Dealer: ${dealerName}">R${r}<div style="font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:0">${dealerName}</div></th>`;
+    headCells += `<th title="Dealer: ${dealerName}">R${r}<div style="font-size:9px;color:var(--accent2);font-weight:800;letter-spacing:0;text-transform:none">${dealerName}</div></th>`;
   }
-  if (n===0) mHead += '<th style="color:#ccc;font-style:italic;font-size:11px">No rounds yet</th>';
-  mHead += '</tr></thead>';
+  if (n === 0) headCells += `<th style="color:#ccc;font-style:italic;font-size:11px;font-weight:400">No rounds yet</th>`;
+  headCells += `<th class="sb-col-total">Total</th>`;
 
-  let mBody = sorted.map((p,rank)=>{
-    const cells = n===0 ? '<td></td>' : history.map((round,rIdx)=>{
-      const rd = round.scores[p.origIdx];
-      const isDealer = round.dealer === p.origIdx;
-      return `<td class="sb-round-cell" title="Edit Round ${rIdx+1}" onclick="openEditRound(${rIdx})">
-        <span class="sb-score-num">${rd.score}</span>
-        <div class="sb-phase-mark" style="color:${rd.phaseComplete?'var(--complete)':'var(--incomplete)'}">P${rd.phase}${rd.phaseComplete?'✓':'✗'}</div>
-        ${isDealer?'<div class="sb-dealer-mark">🃏</div>':''}
-      </td>`;
-    }).join('');
-    return `<tr class="${rank===0?'rank-1':''}">${cells}</tr>`;
+  // Build body rows
+  const bodyRows = sorted.map((p, rank) => {
+    const isFirst = rank === 0;
+    // Player name cell (sticky left)
+    let row = `<tr class="${isFirst?'rank-1':''}">`;
+    row += `<td class="sb-col-player">
+      <div class="sb-pname">${p.name}</div>
+      <div class="sb-phase">P${Math.min(p.currentPhase,10)}</div>
+    </td>`;
+
+    // Round cells
+    if (n === 0) {
+      row += `<td></td>`;
+    } else {
+      history.forEach((round, rIdx) => {
+        const rd = round.scores[p.origIdx];
+        const isDealer = round.dealer === p.origIdx;
+        row += `<td class="sb-round-cell" title="Edit Round ${rIdx+1}" onclick="openEditRound(${rIdx})">
+          <span class="sb-score-num">${rd.score}</span>
+          <div class="sb-phase-mark" style="color:${rd.phaseComplete?'var(--complete)':'var(--incomplete)'}">P${rd.phase}${rd.phaseComplete?'✓':'✗'}</div>
+          ${isDealer?'<div class="sb-dealer-mark">🃏</div>':''}
+        </td>`;
+      });
+    }
+
+    // Total cell (sticky right)
+    row += `<td class="sb-col-total"><div class="sb-total-cell">${p.totalScore}</div></td>`;
+    row += `</tr>`;
+    return row;
   }).join('');
-  document.getElementById('sb-mid-table').innerHTML = mHead+'<tbody>'+mBody+'</tbody>';
 
-  // RIGHT
-  let rHead = '<thead><tr><th>Total</th></tr></thead>';
-  let rBody = sorted.map((p,rank)=>`<tr class="${rank===0?'rank-1':''}">
-    <td class="sb-total-td"><div class="sb-total-cell">${p.totalScore}</div></td>
-  </tr>`).join('');
-  document.getElementById('sb-right-table').innerHTML = rHead+'<tbody>'+rBody+'</tbody>';
+  document.getElementById('sb-table').innerHTML =
+    `<thead><tr>${headCells}</tr></thead><tbody>${bodyRows}</tbody>`;
 
+  // Auto-scroll to show latest round (scroll right)
   if (n > 0) {
-    const mid = document.getElementById('sb-mid');
-    requestAnimationFrame(()=>{ mid.scrollLeft = mid.scrollWidth; });
+    const wrap = document.getElementById('sb-scroll-wrap');
+    requestAnimationFrame(() => { wrap.scrollLeft = wrap.scrollWidth; });
   }
 }
 
@@ -588,7 +651,6 @@ function openEditRound(roundIdx) {
   const round = history[roundIdx];
   document.getElementById('edit-modal-subtitle').textContent = `Editing Round ${roundIdx+1} of ${history.length}`;
 
-  // Dealer selector pre-filled
   populateDealerSelect('edit-dealer-select', round.dealer);
 
   document.getElementById('edit-modal-rows').innerHTML = players.map((p,i)=>{
@@ -633,7 +695,6 @@ function saveEditedRound() {
   rebuildPlayerState();
   closeModal('edit-modal');
   renderScoreboard(); renderPhaseTracker(); renderScoreEntry();
-  saveGame();
 }
 
 function deleteRound() {
@@ -642,7 +703,6 @@ function deleteRound() {
   rebuildPlayerState();
   closeModal('edit-modal');
   renderScoreboard(); renderPhaseTracker(); renderScoreEntry();
-  saveGame();
 }
 
 function rebuildPlayerState() {
@@ -694,79 +754,45 @@ function switchTab(tab) {
 /* ── End / Winner ── */
 function endGame() {
   closeModal('end-modal');
-  clearSavedGame();
   saveToArchive();
+  const saved = verifyLastSave();
+
   const sorted=[...players].sort((a,b)=>a.totalScore-b.totalScore||b.currentPhase-a.currentPhase);
   const w=sorted[0];
   hideAll();
-  document.getElementById('winner-screen').style.display='flex';
+  const ws = document.getElementById('winner-screen');
+  ws.style.display='flex';
+
   document.getElementById('winner-name').textContent=w.name;
   let html=`Score: <span>${w.totalScore} pts</span> · Final Phase: <span>${Math.min(w.currentPhase,10)}</span> · Rounds: <span>${history.length}</span>`;
   if (gameLocation) html+=`<br><span style="color:var(--accent3)">📍 ${gameLocation}</span>`;
   document.getElementById('winner-score').innerHTML=html;
+
+  // Show save banner
+  const banner = document.getElementById('save-banner');
+  banner.style.display = saved ? 'flex' : 'none';
+  if (saved) {
+    banner.innerHTML = `<span class="save-banner-icon">✅</span><span>Game saved to archive (${getArchive().length} game${getArchive().length!==1?'s':''} total)</span>`;
+  }
+}
+
+/* Verify the save actually landed in localStorage */
+function verifyLastSave() {
+  try {
+    const archive = getArchive();
+    return archive.length > 0;
+  } catch(e) { return false; }
 }
 
 function showFinalScoreboard() { hideAll(); showGameScreen(); renderScoreboard(); switchTab('board'); }
 
 function newGame() {
   closeModal('new-modal');
-  clearSavedGame();
   hideAll();
   document.getElementById('setup-screen').style.display='flex';
   document.getElementById('player-inputs').innerHTML='';
   document.getElementById('game-location').value='';
-  document.getElementById('resume-banner').style.display='none';
   addPlayerInput(); addPlayerInput(); buildPhaseRef();
-}
-
-/* ── Auto-save in-progress game ── */
-const KEY_GAME = 'phase10_game';
-
-function saveGame() {
-  if (!players.length) return;
-  try {
-    localStorage.setItem(KEY_GAME, JSON.stringify({
-      players, currentRound, history, gameLocation, dealerIdx, savedAt: Date.now()
-    }));
-  } catch(e) {}
-}
-
-function clearSavedGame() { try { localStorage.removeItem(KEY_GAME); } catch(e) {} }
-
-function getSavedGame() {
-  try { const s = localStorage.getItem(KEY_GAME); return s ? JSON.parse(s) : null; }
-  catch(e) { return null; }
-}
-
-function checkForSavedGame() {
-  const s = getSavedGame();
-  if (!s || !s.players || !s.players.length) return;
-  const names = s.players.map(p=>p.name).join(', ');
-  const when  = new Date(s.savedAt).toLocaleString('en-GB',
-    {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-  document.getElementById('resume-details').innerHTML =
-    `<strong>${names}</strong><br>Round <strong>${s.currentRound}</strong>${s.gameLocation?' · 📍 '+s.gameLocation:''}<br>Saved ${when}`;
-  document.getElementById('resume-banner').style.display = 'block';
-}
-
-function doResume() {
-  const s = getSavedGame();
-  if (!s) return;
-  players       = s.players;
-  currentRound  = s.currentRound;
-  history       = s.history;
-  gameLocation  = s.gameLocation || '';
-  dealerIdx     = s.dealerIdx || 0;
-  document.getElementById('header-location').textContent = gameLocation ? '📍 '+gameLocation : '';
-  document.getElementById('resume-banner').style.display = 'none';
-  hideAll(); showGameScreen();
-  switchTab('entry'); renderScoreEntry(); renderPhaseTracker(); updateHeaderRound(); renderScoreboard();
-}
-
-function discardResume() {
-  if (!confirm('Discard the saved game in progress?')) return;
-  clearSavedGame();
-  document.getElementById('resume-banner').style.display = 'none';
 }
 
 /* ── Archive ── */
@@ -858,8 +884,7 @@ function renderArchive() {
 
 function toggleRoundDetail(recIdx) {
   const el = document.getElementById(`arc-detail-${recIdx}`);
-  const btn = el.nextElementSibling?.querySelector('.archive-rounds-toggle') ||
-              el.closest('.archive-card').querySelector('.archive-rounds-toggle');
+  const btn = el.closest('.archive-card').querySelector('.archive-rounds-toggle');
   if (el.classList.toggle('open')) {
     btn.textContent = '📋 Hide Rounds';
   } else {
@@ -885,11 +910,7 @@ function showGameScreen() {
 }
 
 /* ── Init ── */
-(function(){addPlayerInput();addPlayerInput();buildPhaseRef();checkForSavedGame();})();
-
-window.addEventListener('pagehide', saveGame);
-window.addEventListener('beforeunload', saveGame);
-document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') saveGame(); });
+(function(){addPlayerInput();addPlayerInput();buildPhaseRef();})();
 </script>
 </body>
 </html>
