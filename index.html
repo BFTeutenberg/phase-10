@@ -80,7 +80,6 @@
   .round-entry-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px; }
   .round-label { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--accent); }
   .dealer-tag { display:flex; align-items:center; gap:6px; background:var(--surface2); border:1.5px solid var(--border2); border-radius:20px; padding:4px 12px; font-size:12px; font-weight:700; color:var(--muted); }
-  .dealer-tag .dealer-name { color:var(--accent2); }
   .dealer-select { background:none; border:none; font-family:'Nunito',sans-serif; font-size:12px; font-weight:700; color:var(--accent2); outline:none; cursor:pointer; padding:0; }
   .player-score-row { background:var(--surface2); border:1.5px solid var(--border); border-radius:12px; padding:13px 15px; margin-bottom:10px; display:grid; grid-template-columns:1fr auto auto; align-items:center; gap:12px; transition:border-color 0.18s; }
   .player-score-row:hover { border-color:var(--accent); }
@@ -112,63 +111,36 @@
     border-radius: 12px;
     -webkit-overflow-scrolling: touch;
   }
-  .sb-table {
-    border-collapse: collapse;
-    /* min-width keeps the table wide enough to scroll when many rounds exist */
-  }
+  .sb-table { border-collapse: collapse; }
   .sb-table th {
-    font-family:'Nunito',sans-serif;
-    font-size:11px; font-weight:800;
-    letter-spacing:1.5px; text-transform:uppercase;
-    color:var(--muted);
-    padding:9px 10px;
-    background:var(--surface2);
-    border-bottom:1.5px solid var(--border);
-    white-space:nowrap;
-    text-align:center;
+    font-family:'Nunito',sans-serif; font-size:11px; font-weight:800;
+    letter-spacing:1.5px; text-transform:uppercase; color:var(--muted);
+    padding:9px 10px; background:var(--surface2);
+    border-bottom:1.5px solid var(--border); white-space:nowrap; text-align:center;
   }
   .sb-table td {
-    padding:8px 10px;
-    border-bottom:1px solid var(--border);
-    text-align:center;
-    background:var(--surface);
-    vertical-align:middle;
-    white-space:nowrap;
+    padding:8px 10px; border-bottom:1px solid var(--border);
+    text-align:center; background:var(--surface); vertical-align:middle; white-space:nowrap;
   }
   .sb-table tr:last-child td { border-bottom:none; }
   .sb-table tr.rank-1 td { background:#fffaf7; }
 
   /* sticky player-name column */
   .sb-col-player {
-    position:sticky; left:0; z-index:3;
-    text-align:left !important;
-    background:var(--surface2) !important;
-    border-right:1.5px solid var(--border2);
+    position:sticky; left:0; z-index:3; text-align:left !important;
+    background:var(--surface2) !important; border-right:1.5px solid var(--border2);
     min-width:90px; max-width:120px;
   }
   .sb-table tr.rank-1 td.sb-col-player { background:#fffaf7 !important; }
-  /* header cell for player col */
-  .sb-table th.sb-col-player {
-    z-index:4;
-    background:var(--surface2) !important;
-    border-right:1.5px solid var(--border2);
-    text-align:left !important;
-  }
+  .sb-table th.sb-col-player { z-index:4; background:var(--surface2) !important; border-right:1.5px solid var(--border2); text-align:left !important; }
 
   /* sticky total column on right */
   .sb-col-total {
     position:sticky; right:0; z-index:3;
-    background:var(--surface2) !important;
-    border-left:2px solid var(--border2);
-    min-width:60px;
+    background:var(--surface2) !important; border-left:2px solid var(--border2); min-width:60px;
   }
   .sb-table tr.rank-1 td.sb-col-total { background:#fffaf7 !important; }
-  .sb-table th.sb-col-total {
-    z-index:4;
-    background:var(--surface2) !important;
-    border-left:2px solid var(--border2);
-    color:var(--accent);
-  }
+  .sb-table th.sb-col-total { z-index:4; background:var(--surface2) !important; border-left:2px solid var(--border2); color:var(--accent); }
 
   .sb-pname { font-weight:800; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:110px; display:block; }
   .rank-1 .sb-pname { color:var(--accent); }
@@ -190,6 +162,7 @@
   .phase-player-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
   .phase-player-name { font-weight:800; font-size:15px; }
   .current-phase-badge { background:var(--accent); color:#fff; font-family:'Nunito',sans-serif; font-size:13px; font-weight:800; padding:3px 12px; border-radius:20px; }
+  .current-phase-badge.badge-done { background:var(--complete); }
   .phase-dots { display:flex; flex-wrap:wrap; gap:5px; }
   .phase-dot { width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-family:'Nunito',sans-serif; font-size:13px; font-weight:800; border:1.5px solid var(--border); background:var(--surface); color:var(--muted); transition:all 0.18s; }
   .phase-dot.done { background:var(--complete); border-color:var(--complete); color:#fff; }
@@ -204,7 +177,6 @@
   .winner-score { font-size:15px; color:var(--muted); line-height:1.9; font-weight:600; }
   .winner-score span { color:var(--accent); font-weight:800; }
 
-  /* Save confirmation banner */
   .save-banner {
     display:flex; align-items:center; gap:9px;
     background:#edfaf4; border:1.5px solid var(--complete);
@@ -246,7 +218,6 @@
   .archive-chip .chip-score { font-weight:900; font-size:16px; color:var(--muted); }
   .archive-chip .chip-phase { font-size:11px; color:var(--accent3); font-weight:700; }
 
-  /* Archive round history toggle */
   .archive-rounds-toggle { background:none; border:1.5px solid var(--border); border-radius:8px; padding:5px 12px; font-size:12px; font-weight:700; color:var(--muted); cursor:pointer; transition:all 0.18s; }
   .archive-rounds-toggle:hover { border-color:var(--accent2); color:var(--accent2); }
   .archive-rounds-detail { display:none; margin-top:12px; overflow-x:auto; }
@@ -259,7 +230,6 @@
   .arc-table td:first-child { text-align:left; font-weight:700; font-size:11px; color:var(--muted); white-space:nowrap; }
   .arc-score { font-weight:800; font-size:14px; }
   .arc-phase { font-size:10px; font-weight:700; }
-  .arc-dealer { font-size:9px; color:var(--accent2); font-weight:800; }
 
   .archive-card-foot { margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
   .del-btn { background:none; border:1.5px solid var(--border); border-radius:7px; color:var(--muted); padding:4px 11px; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.18s; }
@@ -280,7 +250,6 @@
   .modal-btn.cancel { background:var(--surface2); color:var(--muted); border:1.5px solid var(--border); }
   .modal-btn.cancel:hover { border-color:var(--accent2); color:var(--accent2); }
 
-  /* Edit modal rows */
   .edit-modal-subtitle { font-size:12px; color:var(--muted); letter-spacing:1px; margin-bottom:6px; font-weight:700; text-transform:uppercase; }
   .edit-dealer-row { display:flex; align-items:center; gap:10px; background:var(--surface2); border:1.5px solid var(--border2); border-radius:9px; padding:9px 13px; margin-bottom:14px; }
   .edit-dealer-row label { font-size:11px; font-weight:800; color:var(--muted); letter-spacing:1px; text-transform:uppercase; white-space:nowrap; }
@@ -365,7 +334,7 @@
     <button class="confirm-round-btn" onclick="confirmRound()">Confirm Round ▶</button>
   </div>
 
-  <!-- Scoreboard — single scrollable table with sticky columns -->
+  <!-- Scoreboard -->
   <div id="tab-board" class="tab-content">
     <div class="edit-hint">✏ Tap any round score to edit it</div>
     <div class="sb-scroll-wrap" id="sb-scroll-wrap">
@@ -385,10 +354,9 @@
   <div class="winner-title">Winner!</div>
   <div class="winner-name" id="winner-name"></div>
   <div class="winner-score" id="winner-score"></div>
-  <!-- Save confirmation banner — shown after endGame() -->
   <div class="save-banner" id="save-banner" style="display:none">
     <span class="save-banner-icon">✅</span>
-    <span>Game saved to archive</span>
+    <span id="save-banner-text">Game saved to archive</span>
   </div>
   <div class="winner-actions">
     <button class="winner-btn" onclick="showFinalScoreboard()">View Scores</button>
@@ -410,7 +378,7 @@
 <div class="modal-overlay" id="end-modal">
   <div class="modal">
     <h2>End Game?</h2>
-    <p>This will save the game to the archive and declare a winner. Lowest score wins (tiebreak: highest phase reached).</p>
+    <p>This will save the game to the archive and declare a winner. First to complete Phase 10 wins — if nobody has, lowest score wins.</p>
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeModal('end-modal')">Cancel</button>
       <button class="modal-btn confirm" onclick="endGame()">Save &amp; End</button>
@@ -435,7 +403,6 @@
   <div class="modal" style="max-width:510px">
     <h2>Edit Round</h2>
     <div class="edit-modal-subtitle" id="edit-modal-subtitle"></div>
-    <!-- Dealer selector -->
     <div class="edit-dealer-row">
       <label>🃏 Dealer</label>
       <select class="edit-dealer-select" id="edit-dealer-select"></select>
@@ -460,10 +427,31 @@ const PHASES = [
 
 let players = [];
 let currentRound = 1;
-let history = []; // each entry: { dealer: playerIdx, scores: [{score, phaseComplete, phase},...] }
+let history = [];
+// Each history entry: { dealer: playerIdx, scores: [{score, phaseComplete, phase},...] }
+// NOTE: p.currentPhase goes up to 11 internally when Phase 10 is completed.
+//       Display always clamps to Phase 10. This lets us distinguish "on Phase 10" vs "completed Phase 10".
 let gameLocation = '';
 let editingRound = -1;
-let dealerIdx = 0; // current dealer (0-based player index)
+let dealerIdx = 0;
+
+/* ── Winner logic ──
+   Primary:   completed Phase 10 first (currentPhase > 10)
+   Tiebreak:  lowest total score (if multiple completed P10 same round)
+   Otherwise: highest phase reached, then lowest score
+*/
+function sortedPlayers() {
+  return [...players].map((p,i)=>({...p, origIdx:i})).sort((a,b)=>{
+    const aDone = a.currentPhase > 10;
+    const bDone = b.currentPhase > 10;
+    if (aDone && !bDone) return -1;  // a wins — completed P10
+    if (!aDone && bDone) return  1;  // b wins
+    if (aDone && bDone)  return a.totalScore - b.totalScore; // both done: lower score wins
+    // Neither done: highest phase, then lowest score
+    if (b.currentPhase !== a.currentPhase) return b.currentPhase - a.currentPhase;
+    return a.totalScore - b.totalScore;
+  });
+}
 
 /* ── Modals ── */
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
@@ -521,14 +509,19 @@ function renderScoreEntry() {
   document.getElementById('entry-round-label').textContent = `Round ${currentRound}`;
   populateDealerSelect('dealer-select', dealerIdx);
 
-  document.getElementById('score-entry-rows').innerHTML = players.map((p,i)=>`
+  document.getElementById('score-entry-rows').innerHTML = players.map((p,i)=>{
+    // If a player has already completed Phase 10, they can't advance further — show completed
+    const displayPhase = Math.min(p.currentPhase, 10);
+    const alreadyDone = p.currentPhase > 10;
+    return `
     <div class="player-score-row${i===dealerIdx?' is-dealer':''}" id="entry-row-${i}">
       <div class="player-info-col">
         <div class="player-name-row">
           ${p.name}
           ${i===dealerIdx?'<span class="dealer-pip">Dealer</span>':''}
+          ${alreadyDone?'<span style="font-size:11px;background:var(--complete);color:#fff;border-radius:10px;padding:1px 7px;font-weight:800">✓ P10</span>':''}
         </div>
-        <div class="player-phase-info">Phase ${p.currentPhase} · Total: ${p.totalScore} pts</div>
+        <div class="player-phase-info">${alreadyDone?'Completed all phases!':'Phase '+displayPhase+' · Total: '+p.totalScore+' pts'}</div>
       </div>
       <div class="score-input-group">
         <label>Score</label>
@@ -536,15 +529,15 @@ function renderScoreEntry() {
           onfocus="this.select()" onclick="this.select()">
       </div>
       <div class="phase-toggle">
-        <label>Phase ${p.currentPhase}</label>
+        <label>${alreadyDone?'Done':'Phase '+displayPhase}</label>
         <div class="toggle-pill">
-          <button id="tog-comp-${i}" onclick="togglePhase(${i},true)">✓ Done</button>
-          <button id="tog-inc-${i}" class="active-incomplete" onclick="togglePhase(${i},false)">✗ Skip</button>
+          <button id="tog-comp-${i}" ${alreadyDone?'class="active-complete"':''} onclick="togglePhase(${i},true)">✓ Done</button>
+          <button id="tog-inc-${i}" ${alreadyDone?'':' class="active-incomplete"'} onclick="togglePhase(${i},false)">✗ Skip</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
-  // Live update dealer highlight when select changes
   document.getElementById('dealer-select').addEventListener('change', function() {
     dealerIdx = parseInt(this.value);
     renderScoreEntry();
@@ -564,24 +557,29 @@ function confirmRound() {
   const scores = players.map((p,i)=>({
     score: parseInt(document.getElementById(`score-${i}`).value)||0,
     phaseComplete: isPhaseComplete(i),
-    phase: p.currentPhase
+    phase: Math.min(p.currentPhase, 10)  // record the phase they were attempting (capped at 10 for display)
   }));
 
   history.push({ dealer: chosenDealer, scores });
 
   players.forEach((p,i)=>{
     p.totalScore += scores[i].score;
-    if (scores[i].phaseComplete && p.currentPhase < 10) p.currentPhase++;
+    // Advance phase: allow going to 11 to signal "completed Phase 10"
+    // currentPhase <= 10 means they haven't completed Phase 10 yet
+    if (scores[i].phaseComplete && p.currentPhase <= 10) p.currentPhase++;
     p.phasesCompleted.push(scores[i].phaseComplete);
   });
 
   currentRound++;
-  // Advance dealer to next player
   dealerIdx = (chosenDealer + 1) % players.length;
   updateHeaderRound();
 
-  const last = history[history.length-1];
-  if (players.some((p,i)=>last.scores[i].phase===10&&last.scores[i].phaseComplete)) { endGame(); return; }
+  // Auto-end if any player has completed Phase 10 (currentPhase now 11)
+  if (players.some(p => p.currentPhase > 10)) {
+    endGame();
+    return;
+  }
+
   renderScoreEntry(); renderPhaseTracker(); renderScoreboard();
 }
 
@@ -589,13 +587,11 @@ function updateHeaderRound() {
   document.getElementById('header-round').textContent = currentRound;
 }
 
-/* ── Scoreboard — single table with sticky player + total columns ── */
+/* ── Scoreboard ── */
 function renderScoreboard() {
   const n = history.length;
-  const sorted = [...players].map((p,i)=>({...p,origIdx:i}))
-    .sort((a,b)=>a.totalScore-b.totalScore||b.currentPhase-a.currentPhase);
+  const sorted = sortedPlayers();
 
-  // Build header row
   let headCells = `<th class="sb-col-player">Player</th>`;
   for (let r=1; r<=n; r++) {
     const dealerName = players[history[r-1].dealer]?.name || '';
@@ -604,17 +600,16 @@ function renderScoreboard() {
   if (n === 0) headCells += `<th style="color:#ccc;font-style:italic;font-size:11px;font-weight:400">No rounds yet</th>`;
   headCells += `<th class="sb-col-total">Total</th>`;
 
-  // Build body rows
   const bodyRows = sorted.map((p, rank) => {
     const isFirst = rank === 0;
-    // Player name cell (sticky left)
+    const displayPhase = Math.min(p.currentPhase, 10);
+    const completedAll = p.currentPhase > 10;
     let row = `<tr class="${isFirst?'rank-1':''}">`;
     row += `<td class="sb-col-player">
       <div class="sb-pname">${p.name}</div>
-      <div class="sb-phase">P${Math.min(p.currentPhase,10)}</div>
+      <div class="sb-phase">${completedAll?'✓ P10':'P'+displayPhase}</div>
     </td>`;
 
-    // Round cells
     if (n === 0) {
       row += `<td></td>`;
     } else {
@@ -629,7 +624,6 @@ function renderScoreboard() {
       });
     }
 
-    // Total cell (sticky right)
     row += `<td class="sb-col-total"><div class="sb-total-cell">${p.totalScore}</div></td>`;
     row += `</tr>`;
     return row;
@@ -638,7 +632,6 @@ function renderScoreboard() {
   document.getElementById('sb-table').innerHTML =
     `<thead><tr>${headCells}</tr></thead><tbody>${bodyRows}</tbody>`;
 
-  // Auto-scroll to show latest round (scroll right)
   if (n > 0) {
     const wrap = document.getElementById('sb-scroll-wrap');
     requestAnimationFrame(() => { wrap.scrollLeft = wrap.scrollWidth; });
@@ -650,7 +643,6 @@ function openEditRound(roundIdx) {
   editingRound = roundIdx;
   const round = history[roundIdx];
   document.getElementById('edit-modal-subtitle').textContent = `Editing Round ${roundIdx+1} of ${history.length}`;
-
   populateDealerSelect('edit-dealer-select', round.dealer);
 
   document.getElementById('edit-modal-rows').innerHTML = players.map((p,i)=>{
@@ -710,7 +702,8 @@ function rebuildPlayerState() {
   history.forEach(round=>{
     players.forEach((p,i)=>{
       p.totalScore += round.scores[i].score;
-      if (round.scores[i].phaseComplete && p.currentPhase<10) p.currentPhase++;
+      // Allow phase to go to 11 to signal Phase 10 completed
+      if (round.scores[i].phaseComplete && p.currentPhase <= 10) p.currentPhase++;
       p.phasesCompleted.push(round.scores[i].phaseComplete);
     });
   });
@@ -721,19 +714,24 @@ function rebuildPlayerState() {
 /* ── Phase Tracker ── */
 function renderPhaseTracker() {
   document.getElementById('phase-tracker-grid').innerHTML = players.map((p,pi)=>{
+    const completedAll = p.currentPhase > 10;
+    const displayPhase = Math.min(p.currentPhase, 10);
     const dots = Array.from({length:10},(_,phIdx)=>{
-      const n=phIdx+1;
-      const cls = n<p.currentPhase?'done':n===p.currentPhase?'current':'';
+      const n = phIdx+1;
+      // If completedAll, all 10 dots are done
+      const cls = completedAll ? 'done' : (n < p.currentPhase ? 'done' : n === p.currentPhase ? 'current' : '');
       return `<div class="phase-dot ${cls}" title="Phase ${n}: ${PHASES[phIdx]}">${n}</div>`;
     }).join('');
     const log = p.phasesCompleted.map((comp,rIdx)=>{
-      const ph=history[rIdx].scores[pi].phase;
+      const ph = history[rIdx].scores[pi].phase;
       return `<span style="font-size:12px;font-weight:700;color:${comp?'var(--complete)':'var(--incomplete)'}">R${rIdx+1}:P${ph}${comp?'✓':'✗'}</span>`;
     }).join(' ');
+    const badgeClass = completedAll ? 'current-phase-badge badge-done' : 'current-phase-badge';
+    const badgeText = completedAll ? '✓ All Done!' : `Phase ${displayPhase}`;
     return `<div class="phase-player-card">
       <div class="phase-player-header">
         <span class="phase-player-name">${p.name}</span>
-        <span class="current-phase-badge">Phase ${Math.min(p.currentPhase,10)}</span>
+        <span class="${badgeClass}">${badgeText}</span>
       </div>
       <div class="phase-dots">${dots}</div>
       ${log?`<div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:5px">${log}</div>`:''}
@@ -755,33 +753,26 @@ function switchTab(tab) {
 function endGame() {
   closeModal('end-modal');
   saveToArchive();
-  const saved = verifyLastSave();
 
-  const sorted=[...players].sort((a,b)=>a.totalScore-b.totalScore||b.currentPhase-a.currentPhase);
-  const w=sorted[0];
+  const ranked = sortedPlayers();
+  const w = ranked[0];
+  const completedAll = w.currentPhase > 10;
+
   hideAll();
-  const ws = document.getElementById('winner-screen');
-  ws.style.display='flex';
+  document.getElementById('winner-screen').style.display='flex';
+  document.getElementById('winner-name').textContent = w.name;
 
-  document.getElementById('winner-name').textContent=w.name;
-  let html=`Score: <span>${w.totalScore} pts</span> · Final Phase: <span>${Math.min(w.currentPhase,10)}</span> · Rounds: <span>${history.length}</span>`;
-  if (gameLocation) html+=`<br><span style="color:var(--accent3)">📍 ${gameLocation}</span>`;
-  document.getElementById('winner-score').innerHTML=html;
+  let html = `Score: <span>${w.totalScore} pts</span>`;
+  if (completedAll) html += ` · <span style="color:var(--complete)">Completed Phase 10! 🎉</span>`;
+  html += ` · Rounds: <span>${history.length}</span>`;
+  if (gameLocation) html += `<br><span style="color:var(--accent3)">📍 ${gameLocation}</span>`;
+  document.getElementById('winner-score').innerHTML = html;
 
-  // Show save banner
+  const archive = getArchive();
   const banner = document.getElementById('save-banner');
-  banner.style.display = saved ? 'flex' : 'none';
-  if (saved) {
-    banner.innerHTML = `<span class="save-banner-icon">✅</span><span>Game saved to archive (${getArchive().length} game${getArchive().length!==1?'s':''} total)</span>`;
-  }
-}
-
-/* Verify the save actually landed in localStorage */
-function verifyLastSave() {
-  try {
-    const archive = getArchive();
-    return archive.length > 0;
-  } catch(e) { return false; }
+  banner.style.display = 'flex';
+  document.getElementById('save-banner-text').textContent =
+    `Game saved to archive (${archive.length} game${archive.length!==1?'s':''} total)`;
 }
 
 function showFinalScoreboard() { hideAll(); showGameScreen(); renderScoreboard(); switchTab('board'); }
@@ -800,48 +791,62 @@ function getArchive() { try{return JSON.parse(localStorage.getItem('phase10_arch
 
 function saveToArchive() {
   if (!history.length) return;
-  const archive=getArchive();
-  const sorted=[...players].sort((a,b)=>a.totalScore-b.totalScore||b.currentPhase-a.currentPhase);
-  const now=new Date();
+  const archive = getArchive();
+  const ranked = sortedPlayers();
+  const now = new Date();
   archive.unshift({
     id: now.getTime(),
     date: now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
     time: now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),
     location: gameLocation,
     rounds: history.length,
-    winner: sorted[0].name,
+    winner: ranked[0].name,
     playerNames: players.map(p=>p.name),
-    players: players.map(p=>({name:p.name, totalScore:p.totalScore, finalPhase:Math.min(p.currentPhase,10)})),
+    players: players.map(p=>({
+      name: p.name,
+      totalScore: p.totalScore,
+      // finalPhase: 10 means they completed P10, otherwise the phase they reached
+      finalPhase: Math.min(p.currentPhase, 10),
+      completedAll: p.currentPhase > 10
+    })),
     history: history.map(round=>({
       dealer: round.dealer,
       scores: round.scores.map(s=>({score:s.score, phaseComplete:s.phaseComplete, phase:s.phase}))
     }))
   });
-  localStorage.setItem('phase10_archive',JSON.stringify(archive));
+  localStorage.setItem('phase10_archive', JSON.stringify(archive));
 }
 
 function showArchive() {
   hideAll();
-  const as=document.getElementById('archive-screen');
+  const as = document.getElementById('archive-screen');
   as.style.display='flex'; as.style.flexDirection='column'; renderArchive();
 }
 
 function renderArchive() {
-  const archive=getArchive();
-  const body=document.getElementById('archive-body');
+  const archive = getArchive();
+  const body = document.getElementById('archive-body');
   if (!archive.length) {
     body.innerHTML=`<div class="archive-empty"><div class="empty-icon">📭</div><p>No archived games yet.<br>Finish a game and it will appear here.</p></div>`;
     return;
   }
-  body.innerHTML=archive.map((rec,recIdx)=>{
-    const chips=[...rec.players].sort((a,b)=>a.totalScore-b.totalScore).map((p,rank)=>
-      `<div class="archive-chip ${rank===0?'winner-chip':''}">
+  body.innerHTML = archive.map((rec,recIdx)=>{
+    const chips = [...rec.players].sort((a,b)=>{
+      // Use same winner sort for archive display
+      const aDone = a.completedAll || a.finalPhase===10; // handle old records
+      const bDone = b.completedAll || b.finalPhase===10;
+      if (aDone && !bDone) return -1;
+      if (!aDone && bDone) return 1;
+      if (aDone && bDone) return a.totalScore - b.totalScore;
+      if (b.finalPhase !== a.finalPhase) return b.finalPhase - a.finalPhase;
+      return a.totalScore - b.totalScore;
+    }).map((p,rank)=>`
+      <div class="archive-chip ${rank===0?'winner-chip':''}">
         ${rank===0?'👑 ':''}<span class="chip-name">${p.name}</span>
         <span class="chip-score">${p.totalScore}</span>
-        <span class="chip-phase">P${p.finalPhase}</span>
+        <span class="chip-phase">${(p.completedAll)?'✓P10':'P'+p.finalPhase}</span>
       </div>`).join('');
 
-    // Round-by-round table (hidden until toggled)
     let roundTable = '';
     if (rec.history && rec.history.length && rec.playerNames) {
       const pNames = rec.playerNames;
@@ -905,12 +910,12 @@ function hideAll() {
     .forEach(id=>document.getElementById(id).style.display='none');
 }
 function showGameScreen() {
-  const gs=document.getElementById('game-screen');
+  const gs = document.getElementById('game-screen');
   gs.style.display='flex'; gs.style.flexDirection='column';
 }
 
 /* ── Init ── */
-(function(){addPlayerInput();addPlayerInput();buildPhaseRef();})();
+(function(){ addPlayerInput(); addPlayerInput(); buildPhaseRef(); })();
 </script>
 </body>
 </html>
