@@ -297,6 +297,35 @@
   .edit-toggle-pill button.active-complete { background:var(--complete); color:#fff; }
   .edit-toggle-pill button.active-incomplete { background:var(--incomplete); color:#fff; }
 
+  /* Score input invalid state */
+  .score-input.invalid, .edit-score-inp.invalid {
+    border-color: var(--incomplete) !important;
+    background: #fff0ee !important;
+    animation: shake 0.3s ease;
+  }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)}
+  }
+  .score-invalid-msg {
+    font-size:11px; color:var(--incomplete); font-weight:700;
+    text-align:center; margin-top:3px;
+  }
+
+  /* Player name autocomplete */
+  .player-entry { position:relative; }
+  .name-suggestions {
+    position:absolute; top:100%; left:0; right:38px; /* stop before the × button */
+    background:var(--surface); border:1.5px solid var(--accent);
+    border-top:none; border-radius:0 0 10px 10px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.12);
+    z-index:50; max-height:160px; overflow-y:auto;
+  }
+  .name-suggestion {
+    padding:9px 13px; cursor:pointer; font-size:14px; font-weight:700;
+    transition:background 0.12s;
+  }
+  .name-suggestion:hover { background:var(--surface2); color:var(--accent); }
+
   @media (max-width:520px) {
     .player-score-row { grid-template-columns:1fr 1fr; grid-template-rows:auto auto; }
     .player-info-col { grid-column:1/-1; }
@@ -429,8 +458,20 @@
     <p>First to complete Phase 10 wins. If nobody has finished yet, you can still end — but no winner will be declared.</p>
     <div class="modal-actions" style="flex-direction:column;gap:8px;align-items:stretch">
       <button class="modal-btn confirm" style="text-align:center" onclick="endGame(true)">Save &amp; End</button>
-      <button class="modal-btn" style="background:var(--surface2);color:var(--muted);border:1.5px solid var(--border);text-align:center" onclick="endGame(false)">End &amp; Don't Save</button>
+      <button class="modal-btn" style="background:var(--surface2);color:var(--muted);border:1.5px solid var(--border);text-align:center" onclick="closeModal('end-modal');openModal('nosave-modal')">End &amp; Don't Save</button>
       <button class="modal-btn cancel" style="text-align:center" onclick="closeModal('end-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Confirm Don't Save -->
+<div class="modal-overlay" id="nosave-modal">
+  <div class="modal">
+    <h2>Don't Save?</h2>
+    <p>This game will <strong>not</strong> be saved to the archive. Are you sure you want to discard it?</p>
+    <div class="modal-actions" style="flex-direction:column;gap:8px;align-items:stretch">
+      <button class="modal-btn confirm" style="text-align:center" onclick="closeModal('nosave-modal');endGame(false)">Yes, End Without Saving</button>
+      <button class="modal-btn cancel" style="text-align:center" onclick="closeModal('nosave-modal')">Cancel</button>
     </div>
   </div>
 </div>
@@ -515,14 +556,49 @@ function buildPhaseRef() {
     </div>`).join('');
 }
 
+/* ── Player name autocomplete ── */
+function getKnownNames() {
+  const archive = getArchive();
+  const seen = new Set();
+  archive.forEach(rec => (rec.playerNames||[]).forEach(n => n && seen.add(n)));
+  return [...seen].sort((a,b)=>a.localeCompare(b));
+}
+
 function addPlayerInput(name='') {
   const c = document.getElementById('player-inputs');
   if (c.children.length >= 6) return;
   const idx = c.children.length;
   const row = document.createElement('div');
   row.className = 'player-entry';
-  row.innerHTML = `<input type="text" placeholder="Player ${idx+1}" value="${name}" maxlength="16">
+  row.innerHTML = `<input type="text" placeholder="Player ${idx+1}" value="${name}" maxlength="16" autocomplete="off">
     <button class="remove-btn" onclick="removePlayerInput(this)">×</button>`;
+  const inp = row.querySelector('input');
+
+  inp.addEventListener('input', function() {
+    // Remove any existing dropdown
+    const old = row.querySelector('.name-suggestions');
+    if (old) old.remove();
+    const val = this.value.trim().toLowerCase();
+    if (!val) return;
+    const matches = getKnownNames().filter(n => n.toLowerCase().startsWith(val) && n.toLowerCase() !== val);
+    if (!matches.length) return;
+    const drop = document.createElement('div');
+    drop.className = 'name-suggestions';
+    drop.innerHTML = matches.slice(0,6).map(n => `<div class="name-suggestion">${n}</div>`).join('');
+    row.appendChild(drop);
+    drop.querySelectorAll('.name-suggestion').forEach(el => {
+      el.addEventListener('mousedown', function(e) {
+        e.preventDefault(); // prevent blur before click
+        inp.value = this.textContent;
+        drop.remove();
+      });
+    });
+  });
+
+  inp.addEventListener('blur', () => {
+    setTimeout(() => { const d = row.querySelector('.name-suggestions'); if (d) d.remove(); }, 150);
+  });
+
   c.appendChild(row);
 }
 
@@ -545,6 +621,7 @@ function startGame() {
   closeModal('new-modal');
   hideAll(); showGameScreen();
   switchTab('entry'); renderScoreEntry(); renderPhaseTracker(); updateHeaderRound();
+  saveGameState();
 }
 
 /* ── Dealer select ── */
@@ -591,6 +668,42 @@ function renderScoreEntry() {
     dealerIdx = parseInt(this.value);
     renderScoreEntry();
   });
+
+  // Attach score validation to each score input
+  players.forEach((_,i) => {
+    const inp = document.getElementById(`score-${i}`);
+    if (inp) inp.addEventListener('change', () => validateScoreInput(inp));
+  });
+}
+
+/* ── Score validation (multiples of 5) ── */
+function validateScoreInput(inp) {
+  const val = parseInt(inp.value) || 0;
+  if (val === 0 || val % 5 === 0) {
+    inp.classList.remove('invalid');
+    const msg = inp.parentElement.querySelector('.score-invalid-msg');
+    if (msg) msg.remove();
+    return true;
+  } else {
+    inp.classList.add('invalid');
+    if (!inp.parentElement.querySelector('.score-invalid-msg')) {
+      const msg = document.createElement('div');
+      msg.className = 'score-invalid-msg';
+      msg.textContent = 'Must be a multiple of 5';
+      inp.parentElement.appendChild(msg);
+    }
+    return false;
+  }
+}
+
+function validateAllScores(prefix) {
+  // Returns true if all score inputs are valid
+  let ok = true;
+  players.forEach((_,i) => {
+    const inp = document.getElementById(`${prefix}-${i}`);
+    if (inp && !validateScoreInput(inp)) ok = false;
+  });
+  return ok;
 }
 
 function togglePhase(idx,complete) {
@@ -602,6 +715,12 @@ function isPhaseComplete(idx) {
 }
 
 function confirmRound() {
+  if (!validateAllScores('score')) {
+    // Scroll to first invalid input
+    const first = document.querySelector('.score-input.invalid');
+    if (first) first.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
   const chosenDealer = parseInt(document.getElementById('dealer-select').value);
   const scores = players.map((p,i)=>({
     score: parseInt(document.getElementById(`score-${i}`).value)||0,
@@ -622,6 +741,7 @@ function confirmRound() {
   currentRound++;
   dealerIdx = (chosenDealer + 1) % players.length;
   updateHeaderRound();
+  saveGameState();
 
   // Auto-end if any player has completed Phase 10 (currentPhase now 11)
   if (players.some(p => p.currentPhase > 10)) {
@@ -716,6 +836,11 @@ function openEditRound(roundIdx) {
     </div>`;
   }).join('');
   openModal('edit-modal');
+  // Attach validation to edit score inputs
+  players.forEach((_,i) => {
+    const inp = document.getElementById(`edit-score-${i}`);
+    if (inp) inp.addEventListener('change', () => validateScoreInput(inp));
+  });
 }
 
 function editTogglePhase(idx,complete) {
@@ -724,6 +849,7 @@ function editTogglePhase(idx,complete) {
 }
 
 function saveEditedRound() {
+  if (!validateAllScores('edit-score')) return;
   const oldRound = history[editingRound];
   history[editingRound] = {
     dealer: parseInt(document.getElementById('edit-dealer-select').value),
@@ -734,6 +860,7 @@ function saveEditedRound() {
     }))
   };
   rebuildPlayerState();
+  saveGameState();
   closeModal('edit-modal');
   renderScoreboard(); renderPhaseTracker(); renderScoreEntry();
 }
@@ -742,6 +869,7 @@ function deleteRound() {
   if (!confirm(`Delete Round ${editingRound+1}? This cannot be undone.`)) return;
   history.splice(editingRound, 1);
   rebuildPlayerState();
+  saveGameState();
   closeModal('edit-modal');
   renderScoreboard(); renderPhaseTracker(); renderScoreEntry();
 }
@@ -801,6 +929,7 @@ function switchTab(tab) {
 /* ── End / Winner ── */
 function endGame(save = true) {
   closeModal('end-modal');
+  clearGameState(); // game is finished — remove the in-progress save
 
   const anyCompleted = players.some(p => p.currentPhase > 10);
 
@@ -861,6 +990,8 @@ function showFinalScoreboard() { hideAll(); showGameScreen(); renderScoreboard()
 
 function newGame() {
   closeModal('new-modal');
+  clearGameState(); // discard current in-progress game
+  players = []; history = []; currentRound = 1; dealerIdx = 0; gameLocation = '';
   hideAll();
   document.getElementById('setup-screen').style.display='flex';
   document.getElementById('player-inputs').innerHTML='';
@@ -996,8 +1127,48 @@ function showGameScreen() {
   gs.style.display='flex'; gs.style.flexDirection='column';
 }
 
+/* ── Game state persistence (survives refresh) ── */
+const GAME_STATE_KEY = 'phase10_current_game';
+
+function saveGameState() {
+  if (!players.length) return;
+  try {
+    localStorage.setItem(GAME_STATE_KEY, JSON.stringify({
+      players, currentRound, history, gameLocation, dealerIdx
+    }));
+  } catch(e) {}
+}
+
+function clearGameState() {
+  try { localStorage.removeItem(GAME_STATE_KEY); } catch(e) {}
+}
+
+function restoreGameState() {
+  try {
+    const raw = localStorage.getItem(GAME_STATE_KEY);
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    if (!s.players || s.players.length < 2) return false;
+    players      = s.players;
+    currentRound = s.currentRound || 1;
+    history      = s.history || [];
+    gameLocation = s.gameLocation || '';
+    dealerIdx    = s.dealerIdx || 0;
+    document.getElementById('header-location').textContent = gameLocation ? '📍 '+gameLocation : '';
+    hideAll(); showGameScreen();
+    switchTab('entry'); renderScoreEntry(); renderPhaseTracker(); updateHeaderRound();
+    return true;
+  } catch(e) { return false; }
+}
+
 /* ── Init ── */
-(function(){ addPlayerInput(); addPlayerInput(); buildPhaseRef(); })();
+(function(){
+  buildPhaseRef();
+  // Try to restore an in-progress game
+  if (!restoreGameState()) {
+    addPlayerInput(); addPlayerInput();
+  }
+})();
 </script>
 </body>
 </html>
