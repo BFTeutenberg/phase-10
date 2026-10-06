@@ -168,28 +168,56 @@
   .phase-dot.done { background:var(--complete); border-color:var(--complete); color:#fff; }
   .phase-dot.current { border-color:var(--accent); color:var(--accent); background:#fff8f6; box-shadow:0 0 0 2px rgba(212,80,42,0.18); }
 
-  /* ════ WINNER ════ */
-  #winner-screen { display:none; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; gap:18px; background:linear-gradient(160deg,#fff8f6 0%,#f5f3ee 100%); min-height:100dvh; }
-  .winner-trophy { font-size:72px; animation:bounce 1.5s ease-in-out infinite; }
-  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-13px)} }
-  .winner-title { font-family:'Playfair Display',serif; font-size:clamp(36px,10vw,72px); font-weight:800; color:var(--accent); }
-  .winner-name { font-family:'Playfair Display',serif; font-size:clamp(26px,7vw,50px); font-weight:700; }
-  .winner-score { font-size:15px; color:var(--muted); line-height:1.9; font-weight:600; }
+  /* ════ WINNER / END-GAME SCREEN ════ */
+  #winner-screen {
+    display:none; flex-direction:column; align-items:center;
+    justify-content:flex-start; /* content starts near top, no off-screen push */
+    padding:28px 24px 32px; text-align:center; gap:14px;
+    background:linear-gradient(160deg,#fff8f6 0%,#f5f3ee 100%);
+    min-height:100dvh;
+  }
+  .winner-trophy { font-size:60px; animation:bounce 1.5s ease-in-out infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .winner-title { font-family:'Playfair Display',serif; font-size:clamp(30px,9vw,60px); font-weight:800; color:var(--accent); }
+  .winner-name  { font-family:'Playfair Display',serif; font-size:clamp(22px,6vw,44px); font-weight:700; }
+  .winner-score { font-size:14px; color:var(--muted); line-height:1.9; font-weight:600; }
   .winner-score span { color:var(--accent); font-weight:800; }
+
+  /* Incomplete-game scores table */
+  .end-scores-table { width:100%; max-width:380px; border-collapse:collapse; border:1.5px solid var(--border); border-radius:12px; overflow:hidden; background:var(--surface); }
+  .end-scores-table th { background:var(--surface2); padding:8px 12px; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); text-align:left; border-bottom:1.5px solid var(--border); }
+  .end-scores-table th:not(:first-child) { text-align:center; }
+  .end-scores-table td { padding:9px 12px; border-bottom:1px solid var(--border); font-size:14px; font-weight:700; text-align:left; }
+  .end-scores-table td:not(:first-child) { text-align:center; }
+  .end-scores-table tr:last-child td { border-bottom:none; }
 
   .save-banner {
     display:flex; align-items:center; gap:9px;
     background:#edfaf4; border:1.5px solid var(--complete);
-    border-radius:12px; padding:11px 18px;
-    font-size:14px; font-weight:700; color:var(--complete);
+    border-radius:12px; padding:10px 16px;
+    font-size:13px; font-weight:700; color:var(--complete);
     width:100%; max-width:380px; justify-content:center;
     animation:fadeInUp 0.4s ease;
   }
   @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-  .save-banner-icon { font-size:20px; }
+  .save-banner-icon { font-size:18px; }
 
-  .winner-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; width:100%; max-width:380px; }
-  .winner-btn { background:var(--accent); border:none; border-radius:11px; padding:13px 20px; color:#fff; font-family:'Nunito',sans-serif; font-size:15px; font-weight:800; cursor:pointer; transition:background 0.18s; box-shadow:0 3px 12px rgba(212,80,42,0.25); flex:1; min-width:130px; }
+  /* Sub-containers inside winner screen */
+  #winner-content, #incomplete-content {
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    width:100%; max-width:380px;
+  }
+  #incomplete-content { gap:12px; }
+
+  .not-saved-note {
+    font-size:12px; color:var(--muted); font-weight:600;
+    width:100%; max-width:380px;
+    background:var(--surface2); border:1.5px solid var(--border);
+    border-radius:10px; padding:9px 14px; text-align:center;
+  }
+
+  .winner-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; width:100%; max-width:380px; }
+  .winner-btn { background:var(--accent); border:none; border-radius:11px; padding:12px 18px; color:#fff; font-family:'Nunito',sans-serif; font-size:14px; font-weight:800; cursor:pointer; transition:background 0.18s; box-shadow:0 3px 12px rgba(212,80,42,0.25); flex:1; min-width:120px; }
   .winner-btn:hover { background:#b83e20; }
   .winner-btn.outline { background:transparent; border:1.5px solid var(--border2); color:var(--muted); box-shadow:none; }
   .winner-btn.outline:hover { border-color:var(--accent2); color:var(--accent2); background:#f0f4ff; }
@@ -348,19 +376,39 @@
   </div>
 </div>
 
-<!-- ══ WINNER ══ -->
+<!-- ══ WINNER / END-GAME SCREEN ══ -->
 <div id="winner-screen">
-  <div class="winner-trophy">🏆</div>
-  <div class="winner-title">Winner!</div>
-  <div class="winner-name" id="winner-name"></div>
-  <div class="winner-score" id="winner-score"></div>
+  <!-- Winner content (shown when someone completed Phase 10) -->
+  <div id="winner-content">
+    <div class="winner-trophy">🏆</div>
+    <div class="winner-title">Winner!</div>
+    <div class="winner-name" id="winner-name"></div>
+    <div class="winner-score" id="winner-score"></div>
+  </div>
+  <!-- Not-completed content (shown when nobody finished Phase 10) -->
+  <div id="incomplete-content" style="display:none">
+    <div class="winner-trophy" style="animation:none">🃏</div>
+    <div class="winner-title" style="color:var(--muted)">Game Ended</div>
+    <div style="font-size:14px;color:var(--muted);font-weight:700;max-width:320px;line-height:1.6">
+      No one completed Phase 10 — game was not completed.
+    </div>
+    <table class="end-scores-table" id="end-scores-table">
+      <thead><tr><th>#</th><th>Player</th><th>Phase</th><th>Score</th></tr></thead>
+      <tbody id="end-scores-body"></tbody>
+    </table>
+  </div>
+  <!-- Save banner (shown after save) -->
   <div class="save-banner" id="save-banner" style="display:none">
     <span class="save-banner-icon">✅</span>
     <span id="save-banner-text">Game saved to archive</span>
   </div>
+  <!-- Not-saved note (shown when ended without saving) -->
+  <div class="not-saved-note" id="not-saved-note" style="display:none">
+    🗑️ This game was not saved to the archive.
+  </div>
   <div class="winner-actions">
     <button class="winner-btn" onclick="showFinalScoreboard()">View Scores</button>
-    <button class="winner-btn green" onclick="showArchive()">View Archive</button>
+    <button class="winner-btn green" id="view-archive-btn" onclick="showArchive()">View Archive</button>
     <button class="winner-btn outline" onclick="openModal('new-modal')">New Game</button>
   </div>
 </div>
@@ -378,10 +426,11 @@
 <div class="modal-overlay" id="end-modal">
   <div class="modal">
     <h2>End Game?</h2>
-    <p>This will save the game to the archive and declare a winner. First to complete Phase 10 wins — if nobody has, lowest score wins.</p>
-    <div class="modal-actions">
-      <button class="modal-btn cancel" onclick="closeModal('end-modal')">Cancel</button>
-      <button class="modal-btn confirm" onclick="endGame()">Save &amp; End</button>
+    <p>First to complete Phase 10 wins. If nobody has finished yet, you can still end — but no winner will be declared.</p>
+    <div class="modal-actions" style="flex-direction:column;gap:8px;align-items:stretch">
+      <button class="modal-btn confirm" style="text-align:center" onclick="endGame(true)">Save &amp; End</button>
+      <button class="modal-btn" style="background:var(--surface2);color:var(--muted);border:1.5px solid var(--border);text-align:center" onclick="endGame(false)">End &amp; Don't Save</button>
+      <button class="modal-btn cancel" style="text-align:center" onclick="closeModal('end-modal')">Cancel</button>
     </div>
   </div>
 </div>
@@ -750,29 +799,62 @@ function switchTab(tab) {
 }
 
 /* ── End / Winner ── */
-function endGame() {
+function endGame(save = true) {
   closeModal('end-modal');
-  saveToArchive();
 
-  const ranked = sortedPlayers();
-  const w = ranked[0];
-  const completedAll = w.currentPhase > 10;
+  const anyCompleted = players.some(p => p.currentPhase > 10);
+
+  if (save) saveToArchive();
 
   hideAll();
-  document.getElementById('winner-screen').style.display='flex';
-  document.getElementById('winner-name').textContent = w.name;
+  document.getElementById('winner-screen').style.display = 'flex';
 
-  let html = `Score: <span>${w.totalScore} pts</span>`;
-  if (completedAll) html += ` · <span style="color:var(--complete)">Completed Phase 10! 🎉</span>`;
-  html += ` · Rounds: <span>${history.length}</span>`;
-  if (gameLocation) html += `<br><span style="color:var(--accent3)">📍 ${gameLocation}</span>`;
-  document.getElementById('winner-score').innerHTML = html;
+  // Hide both content blocks first, then show the right one
+  document.getElementById('winner-content').style.display   = 'none';
+  document.getElementById('incomplete-content').style.display = 'none';
+  document.getElementById('save-banner').style.display      = 'none';
+  document.getElementById('not-saved-note').style.display   = 'none';
 
-  const archive = getArchive();
-  const banner = document.getElementById('save-banner');
-  banner.style.display = 'flex';
-  document.getElementById('save-banner-text').textContent =
-    `Game saved to archive (${archive.length} game${archive.length!==1?'s':''} total)`;
+  if (anyCompleted) {
+    // ── Winner view ──
+    document.getElementById('winner-content').style.display = '';
+    const ranked = sortedPlayers();
+    const w = ranked[0];
+    document.getElementById('winner-name').textContent = w.name;
+    let html = `Score: <span>${w.totalScore} pts</span>`;
+    html += ` · <span style="color:var(--complete)">Completed Phase 10! 🎉</span>`;
+    html += ` · Rounds: <span>${history.length}</span>`;
+    if (gameLocation) html += `<br><span style="color:var(--accent3)">📍 ${gameLocation}</span>`;
+    document.getElementById('winner-score').innerHTML = html;
+  } else {
+    // ── Not-completed view ──
+    document.getElementById('incomplete-content').style.display = '';
+    const ranked = sortedPlayers();
+    const tbody = document.getElementById('end-scores-body');
+    tbody.innerHTML = ranked.map((p, i) => {
+      const phase = Math.min(p.currentPhase, 10);
+      return `<tr>
+        <td style="color:var(--muted);font-weight:800">${i+1}</td>
+        <td style="font-weight:800">${p.name}</td>
+        <td style="color:var(--accent2)">${phase}</td>
+        <td style="color:var(--accent)">${p.totalScore} pts</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Save banner / not-saved note
+  if (save) {
+    const archive = getArchive();
+    const banner = document.getElementById('save-banner');
+    banner.style.display = 'flex';
+    document.getElementById('save-banner-text').textContent =
+      `Game saved to archive (${archive.length} game${archive.length!==1?'s':''} total)`;
+    // Show "View Archive" button
+    document.getElementById('view-archive-btn').style.display = '';
+  } else {
+    document.getElementById('not-saved-note').style.display = '';
+    document.getElementById('view-archive-btn').style.display = 'none';
+  }
 }
 
 function showFinalScoreboard() { hideAll(); showGameScreen(); renderScoreboard(); switchTab('board'); }
